@@ -72,4 +72,16 @@ func Update(c *fiber.Ctx) error {
 	})
 }
 
-func Delete(c *fiber.Ctx) error { return nil }
+func Delete(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var book models.Book
+	if models.DB.Where("id= ?", id).Delete(&book).RowsAffected == 0 {
+		c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Book not found",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Book deleted successfully",
+	})
+}
